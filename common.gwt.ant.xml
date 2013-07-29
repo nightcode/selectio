@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+ Copyright (C) 2008 The NightCode Open Source Project
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<project name="common-gwt">
+
+  <import file="${root.dir}/common.ant.xml" />
+
+  <property name="war.dir" location="war" />
+
+  <property name="gwt.localworkers" value="2" />
+  <property name="gwt.args" value="${gwt.args}" />
+  <property name="module.gwt" value="${module.gwt}" />
+
+  <dependency.check name="gwt.user.jar" location="${lib.dir}/gwt-user-2.5.0.jar" />
+  <dependency.check name="gwt.dev.jar" location="${lib.dir}/build/gwt-dev-2.5.0.jar" />
+  <dependency.check name="validation.api.jar" location="${lib.dir}/validation-api-1.0.0.GA.jar" />
+  <dependency.check name="validation.api.sources.jar" location="${lib.dir}/validation-api-1.0.0.GA-sources.jar" />
+
+  <target name="compile-gwt" description="Compile all java files.">
+    <mkdir dir="${module.build}/war/WEB-INF/classes" />
+    <nightcode.javac destdir="${module.build}/war/WEB-INF/classes" />
+
+    <!-- copy non binary resources in src tree to output classpath -->
+    <copy todir="${module.build}/war/WEB-INF/classes">
+      <fileset dir="src">
+        <include name="**/*.xml" />
+        <include name="**/*.html" />
+        <include name="**/*.png" />
+        <include name="**/*.jpg" />
+        <include name="**/*.gif" />
+        <include name="**/*.properties" />
+        <include name="**/*.proto" />
+        <exclude name="**/*.java" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="source" description="Copy source to the output folder">
+    <mkdir dir="${module.build}/war" />
+    <copy todir="${module.build}/war">
+      <fileset dir="${war.dir}" excludes="WEB-INF/classes/**" />
+    </copy>
+    <if>
+      <available file="pom.xml" />
+      <then>
+        <copy tofile="${module.build}/pom.xml" file="pom.xml" />
+      </then>
+    </if>
+  </target>
+
+  <target name="gwtc" depends="source, compile-gwt" description="Compile to JavaScript.">
+    <outofdate>
+      <sourcefiles>
+        <fileset dir="${src.dir}" />
+        <fileset dir="${module.build}/war/WEB-INF/classes" />
+        <fileset file="${gwt.user.jar}" />
+        <fileset file="${gwt.dev.jar}" />
+        <fileset file="${validation.api.jar}" />
+        <fileset file="${validation.api.sources.jar}" />
+      </sourcefiles>
+      <targetfiles path="${module.build}/war/${ant.project.name}/${ant.project.name}.nocache.js" />
+      <sequential>
+        <mkdir dir="${module.build}/war" />
+        <!--<gwt.timer name="${sample.upper} with ${gwt.samples.localworkers} localWorkers">-->
+        <java dir="${module.build}" classname="com.google.gwt.dev.Compiler" fork="yes" failonerror="true">
+          <classpath>
+            <pathelement location="${src.dir}" />
+            <pathelement location="${module.build}/war/WEB-INF/classes" />
+            <pathelement location="${gwt.user.jar}" />
+            <pathelement location="${gwt.dev.jar}" />
+            <pathelement location="${validation.api.jar}" />
+            <pathelement location="${validation.api.sources.jar}" />
+          </classpath>
+          <jvmarg value="-Xmx256M" />
+          <arg value="-localWorkers" />
+          <arg value="${gwt.localworkers}" />
+          <arg value="-war" />
+          <arg file="${module.build}/war" />
+          <arg line="${gwt.args}" />
+          <arg value="${module.gwt}" />
+        </java>
+        <!--</gwt.timer>-->
+        <length property="build.size">
+          <fileset dir="${module.build}/war/${ant.project.name}" includes="*.cache.html,*.cache.js" />
+        </length>
+        <echo message="output size for ${ant.project.name} is ${build.size} bytes" />
+      </sequential>
+    </outofdate>
+  </target>
+  
+  <target name="copyjars" depends="gwtc" description="Copies the lib JARs to the WAR.">
+    <mkdir dir="${module.build}/war/WEB-INF/lib" />
+    <copy todir="${module.build}/war/WEB-INF/lib" flatten="true">
+      <fileset dir="${lib.dir}" includes="*.jar" />
+      <path refid="compile.classpath" />
+    </copy>
+  </target>
+  
+  <target name="build-gwt" depends="copyjars" description="Build and package this project." />
+  
+</project>

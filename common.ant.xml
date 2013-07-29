@@ -1,0 +1,310 @@
+<?xml version="1.0"?>
+<!--
+ Copyright (C) 2008 The NightCode Open Source Project
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<project name="common">
+  
+  <!-- Global Properties -->
+  <property environment="env" />
+  <tstamp />
+  <property name="version" value="${version}${DSTAMP}" />
+  <property name="version.impl" value="${version}${TSTAMP}" />
+  <property name="src.dir" location="src" />
+  <property name="test.dir" location="test" />
+  <property name="lib.dir" location="${root.dir}/lib" />
+  <property name="build.dir" location="${root.dir}/build" />
+  <property name="build.out.dir" location="${build.dir}/out" />
+  <property name="build.lib.dir" location="${build.dir}/lib" />
+  <property name="build.docs.dir" location="${build.dir}/docs" />
+  <property name="build.dist.dir" location="${build.dir}/dist" />
+  
+  <property name="module.build" location="${build.out.dir}/${ant.project.name}" />
+  <property name="module.lib" location="${build.lib.dir}/${ant.project.name}-${version}.jar" />
+
+  <property name="halt.on.failure" value="true" />
+  
+  <path id="test.classpath">
+    <pathelement location="${lib.dir}/build/junit-4.10.jar" />    
+  </path>
+  
+  <condition property="emma.check" value="${env.EMMA_HOME}" else="/usr/local/emma">
+    <isset property="env.EMMA_HOME" />
+  </condition>
+  <property name="emma.dir" value="${emma.check}" />
+  <property name="emma.enabled" value="true" />
+  <property name="emma.filter" value="" />
+  <property name="emma.coverage" value="${module.build}/test/emma-coverage" />
+  
+  <condition property="findbugs.check" value="${env.FINDBUGS_HOME}" else="/usr/local/findbugs">
+    <isset property="env.FINDBUGS_HOME" />
+  </condition>
+  <property name="findbugs.dir" value="${findbugs.check}" />
+  <property name="findbugs.out" value="${module.build}/findbugs" />
+
+  <property name="doclava.packagenames" value="org.nightcode.*" />
+  
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+    <classpath>
+      <pathelement location="${lib.dir}/build/ant-contrib-1.0b3.jar" />
+    </classpath>
+  </taskdef>
+
+  <taskdef resource="emma_ant.properties">
+    <classpath>
+      <pathelement location="${emma.dir}/lib/emma.jar" />
+      <pathelement location="${emma.dir}/lib/emma_ant.jar" />
+    </classpath>
+  </taskdef> 
+  
+  <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+    <classpath>
+      <pathelement location="${findbugs.dir}/lib/findbugs-ant.jar" />
+    </classpath>
+  </taskdef>
+    
+  <taskdef resource="checkstyletask.properties">
+    <classpath>
+      <pathelement location="${lib.dir}/build/checkstyle-5.6-all.jar" />
+    </classpath>
+  </taskdef>
+  
+  <presetdef name="nightcode.javac">
+    <javac srcdir="${src.dir}"
+           destdir="${module.build}/classes" 
+           debug="true" 
+           debuglevel="lines,vars,source" 
+           source="1.6" 
+           target="1.6" 
+           nowarn="true" 
+           encoding="utf-8"
+           includeantruntime="false">
+        <classpath refid="compile.classpath" />
+      </javac>
+  </presetdef>
+
+  <presetdef name="nightcode.jar">
+    <jar jarfile="${module.lib}"
+         manifest="${module.build}/META-INF/MANIFEST.MF">
+      <fileset dir="${module.build}/classes" />
+    </jar>
+  </presetdef>
+  
+  <macrodef name="dependency.check">
+    <attribute name="name" />
+    <attribute name="location" />
+    <sequential>
+      <property name="@{name}" location="@{location}" />
+      <condition property="@{name}.exists">
+        <and>
+          <available file="${@{name}}" />
+        </and>
+      </condition>
+      <fail unless="@{name}.exists" message="Cannot find dependency ${@{name}}" />
+    </sequential>
+  </macrodef>
+  
+  <target name="clean" description="Cleans this module's generated files.">
+    <delete dir="${module.build}" />
+    <delete file="${module.lib}" />
+  </target>
+
+  <target name="compile" description="Compile Java source.">
+    <mkdir dir="${module.build}/classes" />
+    <nightcode.javac />
+    <copy toDir="${module.build}/classes">
+      <fileset dir="${src.dir}" excludes="**/*.java" />
+    </copy>
+  </target>
+  
+  <target name="test.compile" depends="compile" description="Compile test source.">
+    <mkdir dir="${module.build}/test" />
+    <nightcode.javac srcdir="${test.dir}" destdir="${module.build}/test">
+      <classpath>
+        <pathelement location="${module.build}/classes" />
+        <path refid="compile.classpath" />
+        <path refid="test.classpath" />
+      </classpath>
+    </nightcode.javac>
+    <copy toDir="${module.build}/test">
+      <fileset dir="${test.dir}" excludes="**/*.java" />
+    </copy>
+  </target>
+
+  <target name="test" depends="test.compile" description="Execute JUnit tests.">
+    <mkdir dir="${module.build}/test/reports" />
+    
+    <junit fork="yes" printsummary="yes" failureproperty="test.failure">
+      <jvmarg line="-Xmx512m" />
+      <jvmarg line="-Xss512k" />
+      <classpath>
+        <pathelement location="${module.build}/test" />
+        <pathelement location="${module.build}/classes" />
+        <path refid="compile.classpath" />
+        <path refid="test.classpath" />
+      </classpath>
+
+      <batchtest todir="${module.build}/test/reports">
+        <fileset dir="${test.dir}">
+          <include name="**/*Test.java" />
+        </fileset>
+        <formatter type="plain" />
+        <formatter type="xml" />
+      </batchtest>
+    </junit>
+    
+    <condition property="stop.build" value="true">
+      <and>
+        <istrue value="${halt.on.failure}" />
+        <isset property="test.failure" />
+      </and>
+    </condition>
+
+    <fail message="One or more tests failed for: ${ant.project.name}" if="stop.build" status="2" />
+  </target>
+
+  <target name="emma" depends="test.compile" description="Execute emma task.">
+    <mkdir dir="${module.build}/test/reports" />
+        
+    <antcall target="emma.mkdirs" />
+    <path id="emma.classpath">
+      <pathelement location="${module.build}/classes" />
+    </path>
+    <emma enabled="${emma.enabled}" >
+      <instr instrpathref="emma.classpath" destdir="${module.build}/emma"
+             metadatafile="${module.build}/emma/metadata.emma" merge="false">
+        <filter includes="org.nightcode.*" />
+        <filter value="${emma.filter}" />
+      </instr>
+    </emma>
+    
+    <junit fork="yes" printsummary="yes" failureproperty="test.failure">
+      <jvmarg line="-Xmx512m" />
+      <jvmarg line="-Xss512k" />
+      <jvmarg value="-Demma.coverage.out.file=${emma.coverage}/coverage.emma" />
+      <jvmarg value="-Demma.coverage.out.merge=true" />
+      <classpath>
+        <pathelement location="${module.build}/emma" />
+        <pathelement location="${module.build}/test" />
+        <pathelement location="${module.build}/classes" />
+        <path refid="compile.classpath" />
+        <path refid="test.classpath" />
+        <pathelement location="${emma.dir}/lib/emma.jar" />
+      </classpath>
+
+      <batchtest todir="${module.build}/test/reports">
+        <fileset dir="${test.dir}">
+          <include name="**/*Test.java" />
+        </fileset>
+        <formatter type="plain" />
+        <formatter type="xml" />
+      </batchtest>
+    </junit>
+
+    <emma enabled="${emma.enabled}">
+      <report sourcepath="${src.dir}">
+        <fileset file="${module.build}/emma/metadata.emma" />
+        <fileset dir="${emma.coverage}">
+          <include name="*.emma" />
+        </fileset>
+        <txt outfile="${emma.coverage}/coverage.txt" />
+        <xml outfile="${emma.coverage}/coverage.xml" />
+        <html outfile="${emma.coverage}/coverage.html" />
+      </report>
+    </emma>
+    
+    <condition property="stop.build" value="true">
+      <and>
+        <istrue value="${halt.on.failure}" />
+        <isset property="test.failure" />
+      </and>
+    </condition>
+
+    <fail message="One or more tests failed for: ${ant.project.name}" if="stop.build" status="2" />
+  </target>
+  
+  <target name="findbugs" depends="findbugs.mkdirs, build">
+    <findbugs home="${findbugs.dir}" effort="max" 
+              output="xml" outputFile="${findbugs.out}/findbugs.xml" >
+      <auxClasspath refid="compile.classpath" />
+      <sourcePath path="${src.dir}" />
+      <class location="${module.lib}" />
+    </findbugs>
+  </target>
+  
+  <target name="checkstyle" description="Checks source code style">
+    <mkdir dir="${module.build}" />
+    <checkstyle config="checkstyle.xml">
+      <fileset dir="${src.dir}" includes="**/*.java"/>
+      <formatter type="plain"/>
+      <formatter type="xml" toFile="${module.build}/checkstyle_errors.xml"/>
+    </checkstyle>
+  </target>
+  
+  <target name="build" depends="compile, manifest" description="Build and package this module.">
+    <mkdir dir="${build.lib.dir}" />
+    <nightcode.jar />
+  </target>
+
+  <target name="dist" depends="build, test, checkstyle" />
+  
+  <target name="manifest" description="Generate manifest.">
+    <mkdir dir="${module.build}/META-INF" />
+    <manifest file="${module.build}/META-INF/MANIFEST.MF">
+      <attribute name="Specification-Title" value="${ant.project.name}" />
+      <attribute name="Specification-Version" value="${version}" />
+      <attribute name="Specification-Vendor" value="NightCode" />
+      <attribute name="Implementation-Title" value="${ant.project.name}" />
+      <attribute name="Implementation-Version" value="${version.impl}" />
+      <attribute name="Implementation-Vendor" value="NightCode" />
+    </manifest>
+  </target>
+  
+  <target name="javadoc">
+    <property name="doclava.classpath" refid="compile.classpath" />
+    
+    <javadoc packagenames="${doclava.packagenames}"
+             destdir="${build.docs.dir}"
+             docletpath="${lib.dir}/build/doclava-1.0.6.jar"
+             bootclasspath="${java.home}/lib/rt.jar"
+             maxmemory="256M"
+             classpath="${doclava.classpath}">
+      <fileset dir="${src.dir}" />
+
+      <doclet name="com.google.doclava.Doclava">
+        <param name="-hdf" />
+        <param name="project.name" />
+        <param name="${ant.project.name}" />
+        <param name="-apiversion" value="${ant.project.name}_${version}" />
+        <param name="-assetsdir" value="javadoc/assets" />
+        <param name="-apixml" value="${build.docs.dir}/${ant.project.name}-${version}.xml" />
+      </doclet>
+    </javadoc>
+    <move todir="${build.docs.dir}/javadoc"><fileset dir="${build.docs.dir}/reference" /></move>
+    <delete file="${build.docs.dir}/index.html" />
+  </target>
+  
+  <target name="emma.mkdirs" if="emma.enabled">
+    <delete dir="${module.build}/emma" />
+    <mkdir dir="${module.build}/emma" />
+    <delete dir="${emma.coverage}" />
+    <mkdir dir="${emma.coverage}" />
+  </target>
+  
+  <target name="findbugs.mkdirs">
+    <delete dir="${findbugs.out}" />
+    <mkdir dir="${findbugs.out}" />
+  </target>
+  
+</project>

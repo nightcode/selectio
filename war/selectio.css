@@ -1,0 +1,134 @@
+.modal {
+  margin-left: 0;
+  width: auto;
+  z-index: 900001;
+}
+.btn-link {
+  text-shadow: none;
+}
+.btn-active {
+  color: #FF0000;
+}
+.btn-disabled {
+  display: none;
+}
+
+.selector {
+  margin: 15px;
+  position: relative;
+}
+  .selector .btn-link {
+    padding: 3px;
+  }
+  .slt-loading, .slt-nodata {
+    font-size: 11px;
+    font-weight: bold;
+    padding: 10px 15px;
+  }
+  .slt-container {
+    height: 490px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+  }
+  .slt-container .btn-group {
+    margin-bottom: 10px;
+  }
+  .slt-pager {
+    padding: 10px 4px;
+  }
+
+  .slt-items-box {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    position: absolute;
+    width: 325px;
+  }
+  .slt-items {
+    overflow-x: hidden;
+  }
+    .slt-item {
+      border-bottom: 1px solid #E8F0FF;
+      cursor: pointer;
+      font-size: 13px;
+      min-height: 20px;
+      margin: 0;
+      overflow: hidden;
+      padding: 3px;
+    }
+    .slt-item .icon-check {
+      display: none;
+      float: left;
+      margin-left: 4px;
+      margin-top: 2px;
+    }
+      .slt-item-name {
+        background-color: transparent;
+        display: block;
+        margin-left: 24px;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .slt-item-description {
+        color: #D3D3D3;
+        display: block;
+        margin-left: 24px;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+  .cellListSelectedItem .icon-check {
+    display: block;
+  }
+  .cellListSelectedItem .slt-item-box {
+    font-weight: bold;
+  }
+
+  .slt-frame {
+    border: 1px solid #cccccc;
+    background-color: #FFFFFF;
+    height: 100%;
+    position: relative;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+    -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+    transition: border linear 0.2s, box-shadow linear 0.2s;
+  }
+  .slt-selected {
+    font-size: 85%;
+    font-weight: bold;
+    padding: 5px;
+    width: 315px;
+  }
+    .slt-selected-box {
+      display: inline-block;
+      margin: 0;
+      padding: 0 5px 0 0;
+    }
+      .slt-selected-label {
+        color: #000000;
+        display: inline-block;
+        font-weight: bold;
+        padding-left: 5px;
+      }
+      .slt-selected-item {
+        background-color: #FFFFFF;
+        border: 1px solid #CCCCDD;
+        display: inline-block;
+        font-size: 80%;
+        margin-left: 3px;
+        margin-top: 3px;
+        padding: 2px;
+      }
+      .slt-selected-item:hover {
+        color: #000;
+        cursor: pointer;
+        text-decoration: line-through;
+      }
