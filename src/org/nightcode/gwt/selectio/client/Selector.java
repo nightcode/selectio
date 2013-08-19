@@ -47,7 +47,7 @@ public class Selector implements EntryPoint {
   }-*/;
 
   public static native void publish() /*-{
-    $wnd.showSelector = $entry(@org.nightcode.gwt.selectio.client.Selector::showSelector(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;));
+    $wnd.showSelector = $entry(@org.nightcode.gwt.selectio.client.Selector::showSelector(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;));
   }-*/;
 
   /**
@@ -59,10 +59,10 @@ public class Selector implements EntryPoint {
    * @param function js function which will be executed if OK button pushed
    */
   public static void showSelector(String inputId, String entityName, String server, String function,
-      String selection) {
+      String selection, String title) {
     String url = server + "/selectio?q=" + entityName;
 
-    final DialogBox dialogBox = createDialogBox(url, RootPanel.get(inputId), function, selection);
+    DialogBox dialogBox = createDialogBox(url, RootPanel.get(inputId), function, selection, title);
     dialogBox.setGlassEnabled(true);
     dialogBox.setAnimationEnabled(true);
     dialogBox.center();
@@ -70,10 +70,12 @@ public class Selector implements EntryPoint {
   }
 
   private static DialogBox createDialogBox(final String url, final RootPanel input,
-      final String function, final String selection) {
+      final String function, final String selection, final String title) {
     final DialogBox dialogBox = new DialogBox(new SelectorHeader());
     dialogBox.setStyleName("modal");
-    dialogBox.getCaption().setText("Title");
+    if (title != null) {
+      dialogBox.getCaption().setText(title);
+    }
 
     SelectorRequestFactory requestFactory = new SelectorRequestFactoryJson(url);
     final ItemSelector itemSelector = new ItemSelector(requestFactory, 490);
