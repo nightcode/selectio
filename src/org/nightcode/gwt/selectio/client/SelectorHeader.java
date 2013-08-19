@@ -19,10 +19,13 @@ package org.nightcode.gwt.selectio.client;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
 
+/**
+ * Implementation of DialogBox.Caption.
+ */
 public class SelectorHeader extends HTML implements DialogBox.Caption {
 
-    public SelectorHeader() {
-      super();
-      setStyleName("modal-header");
-    }
+  public SelectorHeader() {
+    super();
+    setStyleName("modal-header");
   }
+}
