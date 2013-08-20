@@ -19,7 +19,7 @@
 
   <groupId>org.nightcode</groupId>
   <artifactId>selectio</artifactId>
-  <version>0.1-b1-SNAPSHOT</version>
+  <version>0.1-b1</version>
   <packaging>jar</packaging>
 
   <name>Selectio</name>
