@@ -78,7 +78,7 @@ public class ItemSelectionModel extends SelectionModel.AbstractSelectionModel<It
     }
 
     @Override public int compareTo(ItemProxy obj) {
-      return item.getId().compareTo(obj.getId());
+      return item.getDisplayName().compareTo(obj.getDisplayName());
     }
   }
 
