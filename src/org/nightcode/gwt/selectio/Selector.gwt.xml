@@ -21,6 +21,7 @@
   <inherits name='com.google.web.bindery.requestfactory.RequestFactory' />
 
   <extend-property name='locale' values='en'/>
+  <extend-property name='locale' values='fr'/>
   <extend-property name='locale' values='ru'/>
   <set-property-fallback name='locale' value='en'/>
 
