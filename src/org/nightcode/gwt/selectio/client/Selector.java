@@ -87,7 +87,7 @@ public class Selector implements EntryPoint {
 
     VerticalPanel dialogContents = new VerticalPanel();
     dialogContents.setSize("300px", "500px");
-    dialogContents.setStyleName("selector");
+    dialogContents.setStyleName("selectio");
     dialogBox.setWidget(dialogContents);
 
     dialogContents.add(itemSelector);
