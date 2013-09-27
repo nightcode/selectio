@@ -17,14 +17,14 @@
 <project name="selectio" default="build-gwt" basedir=".">
 
   <property name="root.dir" location="." />
-  <property name="version" value="0.2-b1-snapshot" />
+  <property name="module.version" value="0.2-b1-snapshot" />
   <property name="gwt.args" value="-style OBF" />
   <property name="module.gwt" value="org.nightcode.gwt.selectio.Selector" />
 
   <import file="${root.dir}/common.gwt.ant.xml" />
 
   <path id="compile.classpath">
-    <fileset dir="${lib.dir}" includes="**/*.jar" />
+    <fileset dir="${lib.dir}" includes="*.jar" />
   </path>
 
   <path id="test.classpath">

@@ -15,11 +15,11 @@
  limitations under the License.
 -->
 <project name="common">
-  
+
   <!-- Global Properties -->
   <property environment="env" />
   <tstamp />
-  <property name="version" value="${version}${DSTAMP}" />
+  <property name="version" value="${module.version}${DSTAMP}" />
   <property name="version.impl" value="${version}${TSTAMP}" />
   <property name="src.dir" location="src" />
   <property name="test.dir" location="test" />
@@ -29,16 +29,19 @@
   <property name="build.lib.dir" location="${build.dir}/lib" />
   <property name="build.docs.dir" location="${build.dir}/docs" />
   <property name="build.dist.dir" location="${build.dir}/dist" />
-  
+
+  <property name="module.packagenames" value="org.nightcode.*" />
   <property name="module.build" location="${build.out.dir}/${ant.project.name}" />
   <property name="module.lib" location="${build.lib.dir}/${ant.project.name}-${version}.jar" />
 
   <property name="halt.on.failure" value="true" />
-  
+
+  <property name="compiler.version" value="1.6" />
+ 
   <path id="test.classpath">
-    <pathelement location="${lib.dir}/build/junit-4.10.jar" />    
+    <pathelement location="${lib.dir}/build/junit-4.10.jar" />
   </path>
-  
+
   <condition property="emma.check" value="${env.EMMA_HOME}" else="/usr/local/emma">
     <isset property="env.EMMA_HOME" />
   </condition>
@@ -46,15 +49,15 @@
   <property name="emma.enabled" value="true" />
   <property name="emma.filter" value="" />
   <property name="emma.coverage" value="${module.build}/test/emma-coverage" />
-  
+
   <condition property="findbugs.check" value="${env.FINDBUGS_HOME}" else="/usr/local/findbugs">
     <isset property="env.FINDBUGS_HOME" />
   </condition>
   <property name="findbugs.dir" value="${findbugs.check}" />
   <property name="findbugs.out" value="${module.build}/findbugs" />
 
-  <property name="doclava.packagenames" value="org.nightcode.*" />
-  
+  <property name="checkstyle.config" value="checkstyle.xml" />
+
   <taskdef resource="net/sf/antcontrib/antcontrib.properties">
     <classpath>
       <pathelement location="${lib.dir}/build/ant-contrib-1.0b3.jar" />
@@ -66,28 +69,28 @@
       <pathelement location="${emma.dir}/lib/emma.jar" />
       <pathelement location="${emma.dir}/lib/emma_ant.jar" />
     </classpath>
-  </taskdef> 
-  
+  </taskdef>
+
   <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
     <classpath>
       <pathelement location="${findbugs.dir}/lib/findbugs-ant.jar" />
     </classpath>
   </taskdef>
-    
+
   <taskdef resource="checkstyletask.properties">
     <classpath>
       <pathelement location="${lib.dir}/build/checkstyle-5.6-all.jar" />
     </classpath>
   </taskdef>
-  
+
   <presetdef name="nightcode.javac">
     <javac srcdir="${src.dir}"
-           destdir="${module.build}/classes" 
-           debug="true" 
-           debuglevel="lines,vars,source" 
-           source="1.6" 
-           target="1.6" 
-           nowarn="true" 
+           destdir="${module.build}/classes"
+           debug="true"
+           debuglevel="lines,vars,source"
+           source="${compiler.version}"
+           target="${compiler.version}"
+           nowarn="true"
            encoding="utf-8"
            includeantruntime="false">
         <classpath refid="compile.classpath" />
@@ -100,7 +103,7 @@
       <fileset dir="${module.build}/classes" />
     </jar>
   </presetdef>
-  
+
   <macrodef name="dependency.check">
     <attribute name="name" />
     <attribute name="location" />
@@ -114,7 +117,7 @@
       <fail unless="@{name}.exists" message="Cannot find dependency ${@{name}}" />
     </sequential>
   </macrodef>
-  
+
   <target name="clean" description="Cleans this module's generated files.">
     <delete dir="${module.build}" />
     <delete file="${module.lib}" />
@@ -127,7 +130,7 @@
       <fileset dir="${src.dir}" excludes="**/*.java" />
     </copy>
   </target>
-  
+
   <target name="test.compile" depends="compile" description="Compile test source.">
     <mkdir dir="${module.build}/test" />
     <nightcode.javac srcdir="${test.dir}" destdir="${module.build}/test">
@@ -144,7 +147,7 @@
 
   <target name="test" depends="test.compile" description="Execute JUnit tests.">
     <mkdir dir="${module.build}/test/reports" />
-    
+
     <junit fork="yes" printsummary="yes" failureproperty="test.failure">
       <jvmarg line="-Xmx512m" />
       <jvmarg line="-Xss512k" />
@@ -163,7 +166,7 @@
         <formatter type="xml" />
       </batchtest>
     </junit>
-    
+
     <condition property="stop.build" value="true">
       <and>
         <istrue value="${halt.on.failure}" />
@@ -176,19 +179,19 @@
 
   <target name="emma" depends="test.compile" description="Execute emma task.">
     <mkdir dir="${module.build}/test/reports" />
-        
+
     <antcall target="emma.mkdirs" />
     <path id="emma.classpath">
       <pathelement location="${module.build}/classes" />
     </path>
-    <emma enabled="${emma.enabled}" >
+    <emma enabled="${emma.enabled}">
       <instr instrpathref="emma.classpath" destdir="${module.build}/emma"
              metadatafile="${module.build}/emma/metadata.emma" merge="false">
-        <filter includes="org.nightcode.*" />
+        <filter includes="${module.packagenames}" />
         <filter value="${emma.filter}" />
       </instr>
     </emma>
-    
+
     <junit fork="yes" printsummary="yes" failureproperty="test.failure">
       <jvmarg line="-Xmx512m" />
       <jvmarg line="-Xss512k" />
@@ -223,7 +226,7 @@
         <html outfile="${emma.coverage}/coverage.html" />
       </report>
     </emma>
-    
+
     <condition property="stop.build" value="true">
       <and>
         <istrue value="${halt.on.failure}" />
@@ -233,32 +236,32 @@
 
     <fail message="One or more tests failed for: ${ant.project.name}" if="stop.build" status="2" />
   </target>
-  
+
   <target name="findbugs" depends="findbugs.mkdirs, build">
-    <findbugs home="${findbugs.dir}" effort="max" 
-              output="xml" outputFile="${findbugs.out}/findbugs.xml" >
+    <findbugs home="${findbugs.dir}" effort="max"
+              output="xml" outputFile="${findbugs.out}/findbugs.xml">
       <auxClasspath refid="compile.classpath" />
       <sourcePath path="${src.dir}" />
       <class location="${module.lib}" />
     </findbugs>
   </target>
-  
+
   <target name="checkstyle" description="Checks source code style">
     <mkdir dir="${module.build}" />
-    <checkstyle config="checkstyle.xml">
-      <fileset dir="${src.dir}" includes="**/*.java"/>
-      <formatter type="plain"/>
-      <formatter type="xml" toFile="${module.build}/checkstyle_errors.xml"/>
+    <checkstyle config="${checkstyle.config}">
+      <fileset dir="${src.dir}" includes="**/*.java" />
+      <formatter type="plain" />
+      <formatter type="xml" toFile="${module.build}/checkstyle_errors.xml" />
     </checkstyle>
   </target>
-  
+
   <target name="build" depends="compile, manifest" description="Build and package this module.">
     <mkdir dir="${build.lib.dir}" />
     <nightcode.jar />
   </target>
 
   <target name="dist" depends="build, test, checkstyle" />
-  
+
   <target name="manifest" description="Generate manifest.">
     <mkdir dir="${module.build}/META-INF" />
     <manifest file="${module.build}/META-INF/MANIFEST.MF">
@@ -270,11 +273,11 @@
       <attribute name="Implementation-Vendor" value="NightCode" />
     </manifest>
   </target>
-  
+
   <target name="javadoc">
     <property name="doclava.classpath" refid="compile.classpath" />
-    
-    <javadoc packagenames="${doclava.packagenames}"
+
+    <javadoc packagenames="${module.packagenames}"
              destdir="${build.docs.dir}"
              docletpath="${lib.dir}/build/doclava-1.0.6.jar"
              bootclasspath="${java.home}/lib/rt.jar"
@@ -294,17 +297,17 @@
     <move todir="${build.docs.dir}/javadoc"><fileset dir="${build.docs.dir}/reference" /></move>
     <delete file="${build.docs.dir}/index.html" />
   </target>
-  
+
   <target name="emma.mkdirs" if="emma.enabled">
     <delete dir="${module.build}/emma" />
     <mkdir dir="${module.build}/emma" />
     <delete dir="${emma.coverage}" />
     <mkdir dir="${emma.coverage}" />
   </target>
-  
+
   <target name="findbugs.mkdirs">
     <delete dir="${findbugs.out}" />
     <mkdir dir="${findbugs.out}" />
   </target>
-  
+
 </project>
