@@ -56,7 +56,7 @@
   <property name="findbugs.dir" value="${findbugs.check}" />
   <property name="findbugs.out" value="${module.build}/findbugs" />
 
-  <property name="checkstyle.config" value="checkstyle.xml" />
+  <property name="checkstyle.config" value="${root.dir}/checkstyle.xml" />
 
   <taskdef resource="net/sf/antcontrib/antcontrib.properties">
     <classpath>
