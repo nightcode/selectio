@@ -83,7 +83,7 @@ public class ItemCell implements Cell<ItemProxy> {
     if (value == null || value.getDisplayName().length() == 0) {
       return;
     }
-    sb.appendHtmlConstant("<div class=\"slt-item\"><i class=\"icon-check\"></i>");
+    sb.appendHtmlConstant("<div class=\"slt-item\"><i class=\"icon-ok\"></i>");
     if (value.getDescription() != null) {
       sb.append(template.itemAndDescription(value.getDisplayName(), value.getDescription()));
     } else {

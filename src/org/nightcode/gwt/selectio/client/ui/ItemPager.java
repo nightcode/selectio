@@ -83,7 +83,7 @@ public class ItemPager extends AbstractPager {
 
     // Add style names to the cells.
     prevPage.setStyleName("btn btn-link");
-    label.addClassName("label");
+    label.addClassName("label label-default");
     nextPage.setStyleName("btn btn-link");
   }
 

@@ -72,7 +72,7 @@ public class Selector implements EntryPoint {
   private static DialogBox createDialogBox(final String url, final RootPanel input,
       final String function, final String selection, final String title) {
     final DialogBox dialogBox = new DialogBox(new SelectorHeader());
-    dialogBox.setStyleName("modal");
+    dialogBox.setStyleName("modal-content");
     if (title != null) {
       dialogBox.getCaption().setText(title);
     }
@@ -109,7 +109,7 @@ public class Selector implements EntryPoint {
         dialogBox.hide();
       }
     });
-    cancelButton.setStyleName("btn");
+    cancelButton.setStyleName("btn btn-default");
 
     Panel buttonPanel = new FlowPanel();
     buttonPanel.setStyleName("btn-toolbar pull-right");
