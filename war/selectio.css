@@ -53,6 +53,9 @@
   .slt-container .btn-group {
     margin: 7px 0;
   }
+  .slt-search {
+    width: 100%;
+  }
   .slt-pager {
     padding: 10px 4px;
   }
@@ -62,7 +65,7 @@
     overflow-x: hidden;
     overflow-y: scroll;
     position: absolute;
-    width: 325px;
+    width: 100%;
   }
   .slt-items {
     overflow-x: hidden;
@@ -123,9 +126,10 @@
   .slt-selected {
     font-size: 85%;
     font-weight: bold;
+    margin-bottom: 10px;
     overflow-y: auto;
     padding: 5px;
-    width: 315px;
+    width: 100%;
   }
     .slt-selected-box {
       display: inline-block;
