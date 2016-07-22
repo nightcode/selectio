@@ -82,9 +82,9 @@ public class ItemPager extends AbstractPager {
     layout.add(nextPage);
 
     // Add style names to the cells.
-    prevPage.setStyleName("btn btn-link");
-    label.addClassName("label label-default");
-    nextPage.setStyleName("btn btn-link");
+    prevPage.setStyleName("slt-btn slt-btn-link");
+    label.addClassName("slt-label slt-label-default");
+    nextPage.setStyleName("slt-btn slt-btn-link");
   }
 
   @Override protected boolean hasNextPage() {
@@ -103,10 +103,10 @@ public class ItemPager extends AbstractPager {
     boolean hasPrev = hasPreviousPage();
     if (hasPrev && prevDisabled) {
       prevDisabled = false;
-      prevPage.getElement().removeClassName("btn-disabled");
+      prevPage.getElement().removeClassName("slt-btn-disabled");
     } else if (!hasPrev && !prevDisabled) {
       prevDisabled = true;
-      prevPage.getElement().addClassName("btn-disabled");
+      prevPage.getElement().addClassName("slt-btn-disabled");
     }
 
     // Update the next and last buttons.
@@ -114,10 +114,10 @@ public class ItemPager extends AbstractPager {
       boolean hasNext = hasNextPage();
       if (hasNext && nextDisabled) {
         nextDisabled = false;
-        nextPage.getElement().removeClassName("btn-disabled");
+        nextPage.getElement().removeClassName("slt-btn-disabled");
       } else if (!hasNext && !nextDisabled) {
         nextDisabled = true;
-        nextPage.getElement().addClassName("btn-disabled");
+        nextPage.getElement().addClassName("slt-btn-disabled");
       }
     }
   }

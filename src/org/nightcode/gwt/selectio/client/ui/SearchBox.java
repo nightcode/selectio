@@ -37,17 +37,17 @@ public class SearchBox extends ComplexPanel implements HasText, HasKeyUpHandlers
   public SearchBox() {
     setElement(DOM.createDiv());
 
-    setStyleName("slt-search input-group");
+    setStyleName("slt-search slt-input-group");
 
     Element spanImage = DOM.createSpan();
-    spanImage.setClassName("input-group-addon");
+    spanImage.setClassName("slt-input-group-addon");
     DOM.appendChild(getElement(), spanImage);
 
     Element image = DOM.createSpan();
-    image.setClassName("icon-search");
+    image.setClassName("slt-icon-search");
     DOM.appendChild(spanImage, image);
 
-    queryField.setStyleName("form-control");
+    queryField.setStyleName("slt-form-control");
     queryField.setFocus(true);
     queryField.selectAll();
     queryField.setText("");

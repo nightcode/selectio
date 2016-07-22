@@ -26,6 +26,6 @@ public class SelectorHeader extends HTML implements DialogBox.Caption {
 
   public SelectorHeader() {
     super();
-    setStyleName("modal-header");
+    setStyleName("slt-modal-header");
   }
 }

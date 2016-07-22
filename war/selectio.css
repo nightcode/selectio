@@ -1,19 +1,19 @@
-.modal-content {
+.slt-modal-content {
   width: auto;
   z-index: 900001;
 }
-.btn-link {
+.slt-btn-link {
   text-shadow: none;
 }
-.btn-active {
+.slt-btn-active {
   color: #FF0000;
 }
-.btn-disabled {
+.slt-btn-disabled {
   display: none;
 }
 
-[class^="icon-"],
-[class*=" icon-"] {
+[class^="slt-icon-"],
+[class*=" slt-icon-"] {
   display: inline-block;
   width: 14px;
   height: 14px;
@@ -25,18 +25,18 @@
   background-position: 14px 14px;
   background-repeat: no-repeat;
 }
-.icon-ok {
+.slt-icon-ok {
   background-position: -288px 0;
 }
-.icon-search {
+.slt-icon-search {
   background-position: -48px 0;
 }
 
-.selectio {
+.slt-selectio {
   margin: 15px;
   position: relative;
 }
-  .selectio .btn-link {
+  .slt-selectio .slt-btn-link {
     padding: 3px;
   }
   .slt-loading, .slt-nodata {
@@ -50,7 +50,7 @@
     position: relative;
     width: 100%;
   }
-  .slt-container .btn-group {
+  .slt-container .slt-btn-group {
     margin: 7px 0;
   }
   .slt-search {
@@ -79,7 +79,7 @@
       overflow: hidden;
       padding: 3px;
     }
-    .slt-item .icon-ok {
+    .slt-item .slt-icon-ok {
       display: none;
       float: left;
       margin-left: 4px;
@@ -100,7 +100,7 @@
         white-space: nowrap;
       }
 
-  .cellListSelectedItem .icon-ok {
+  .cellListSelectedItem .slt-icon-ok {
     display: block;
   }
   .cellListSelectedItem .slt-item-box {

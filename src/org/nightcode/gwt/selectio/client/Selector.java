@@ -72,7 +72,7 @@ public class Selector implements EntryPoint {
   private static DialogBox createDialogBox(final String url, final RootPanel input,
       final String function, final String selection, final String title) {
     final DialogBox dialogBox = new DialogBox(new SelectorHeader());
-    dialogBox.setStyleName("modal-content");
+    dialogBox.setStyleName("slt-modal-content");
     if (title != null) {
       dialogBox.getCaption().setText(title);
     }
@@ -87,7 +87,7 @@ public class Selector implements EntryPoint {
 
     VerticalPanel dialogContents = new VerticalPanel();
     dialogContents.setSize("300px", "500px");
-    dialogContents.setStyleName("selectio");
+    dialogContents.setStyleName("slt-selectio");
     dialogBox.setWidget(dialogContents);
 
     dialogContents.add(itemSelector);
@@ -102,17 +102,17 @@ public class Selector implements EntryPoint {
         dialogBox.hide();
       }
     });
-    doneButton.setStyleName("btn btn-primary");
+    doneButton.setStyleName("slt-btn slt-btn-primary");
 
     Button cancelButton = new Button(MESSAGES.cancel(), new ClickHandler() {
       @Override public void onClick(ClickEvent clickEvent) {
         dialogBox.hide();
       }
     });
-    cancelButton.setStyleName("btn btn-default");
+    cancelButton.setStyleName("slt-btn slt-btn-default");
 
     Panel buttonPanel = new FlowPanel();
-    buttonPanel.setStyleName("btn-toolbar pull-right");
+    buttonPanel.setStyleName("slt-btn-toolbar slt-pull-right");
     buttonPanel.add(doneButton);
     buttonPanel.add(cancelButton);
 

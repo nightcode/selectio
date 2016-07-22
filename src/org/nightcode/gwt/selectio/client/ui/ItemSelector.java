@@ -190,7 +190,7 @@ public class ItemSelector extends Composite implements ClickHandler {
     none = createAnchor(ItemSelectionModel.Type.NONE, messages.none());
 
     FlowPanel selectionPanel = new FlowPanel();
-    selectionPanel.setStyleName("btn-group");
+    selectionPanel.setStyleName("slt-btn-group");
     selectionPanel.add(search);
     selectionPanel.add(all);
     selectionPanel.add(none);
@@ -320,7 +320,7 @@ public class ItemSelector extends Composite implements ClickHandler {
   private Anchor createAnchor(ItemSelectionModel.Type type, String text) {
     Anchor anchor = new Anchor(text);
     anchor.getElement().setId(type.name());
-    anchor.setStyleName("btn btn-link");
+    anchor.setStyleName("slt-btn slt-btn-link");
     anchor.addClickHandler(this);
     return anchor;
   }
@@ -335,18 +335,18 @@ public class ItemSelector extends Composite implements ClickHandler {
     boolean hasSelection = selectionModel.getExceptions().size() > 0
         || selectionModel.getSearchQueries().size() > 0;
     if (hasSelection) {
-      all.setStyleName("btn btn-link");
-      none.setStyleName("btn btn-link");
+      all.setStyleName("slt-btn slt-btn-link");
+      none.setStyleName("slt-btn slt-btn-link");
     } else {
       switch (selectionModel.getType()) {
         case ALL:
-          all.setStyleName("btn btn-link btn-active");
-          none.setStyleName("btn btn-link");
+          all.setStyleName("slt-btn slt-btn-link slt-btn-active");
+          none.setStyleName("slt-btn slt-btn-link");
           break;
         case NONE:
         default:
-          all.setStyleName("btn btn-link");
-          none.setStyleName("btn btn-link btn-active");
+          all.setStyleName("slt-btn slt-btn-link");
+          none.setStyleName("slt-btn slt-btn-link slt-btn-active");
           break;
       }
     }
