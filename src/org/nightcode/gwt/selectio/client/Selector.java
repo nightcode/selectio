@@ -47,7 +47,7 @@ public class Selector implements EntryPoint {
   }-*/;
 
   public static native void publish() /*-{
-    $wnd.showSelector = $entry(@org.nightcode.gwt.selectio.client.Selector::showSelector(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;));
+    $wnd.showSelector = $entry(@org.nightcode.gwt.selectio.client.Selector::showSelector(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;));
   }-*/;
 
   /**
@@ -59,10 +59,10 @@ public class Selector implements EntryPoint {
    * @param function js function which will be executed if OK button pushed
    */
   public static void showSelector(String inputId, String entityName, String server, String function,
-      String selection, String title) {
+      String selection, String title, String numRows) {
     String url = server + "/selectio?q=" + entityName;
 
-    DialogBox dialogBox = createDialogBox(url, RootPanel.get(inputId), function, selection, title);
+    DialogBox dialogBox = createDialogBox(url, RootPanel.get(inputId), function, selection, title, numRows);
     dialogBox.setGlassEnabled(true);
     dialogBox.setAnimationEnabled(true);
     dialogBox.center();
@@ -70,15 +70,22 @@ public class Selector implements EntryPoint {
   }
 
   private static DialogBox createDialogBox(final String url, final RootPanel input,
-      final String function, final String selection, final String title) {
+      final String function, final String selection, final String title, final String numRows) {
     final DialogBox dialogBox = new DialogBox(new SelectorHeader());
     dialogBox.setStyleName("slt-modal-content");
     if (title != null) {
       dialogBox.getCaption().setText(title);
     }
 
+    int pageSize;
+    if (numRows == null) {
+      pageSize = 25;
+    } else {
+      pageSize = Integer.parseInt(numRows);
+    }
+
     SelectorRequestFactory requestFactory = new SelectorRequestFactoryJson(url);
-    final ItemSelector itemSelector = new ItemSelector(requestFactory, 490);
+    final ItemSelector itemSelector = new ItemSelector(requestFactory, 490, pageSize);
 
     if (selection != null) {
       SelectionJso selectionJso = SelectionJso.selectionFromJson(selection);

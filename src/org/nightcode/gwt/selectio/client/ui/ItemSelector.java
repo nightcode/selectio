@@ -130,14 +130,14 @@ public class ItemSelector extends Composite implements ClickHandler {
     }
   };
 
-  public ItemSelector(final SelectorRequestFactory requestFactory, int height) {
+  public ItemSelector(final SelectorRequestFactory requestFactory, int height, int pageSize) {
     this.height = height;
 
     final CellList.Resources cellListResources = GWT.create(CellListResources.class);
 
     final SelectorMessages messages = Selector.MESSAGES;
 
-    display = new CellList<ItemProxy>(new ItemCell(), cellListResources);
+    display = new CellList<ItemProxy>(new ItemCell(), cellListResources, pageSize);
     display.setStyleName("slt-items");
     Widget noDataWidget = new Label(messages.noData());
     noDataWidget.setStyleName("slt-nodata");

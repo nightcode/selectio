@@ -3,4 +3,5 @@
 
 <suppressions>
   <suppress files="selectio\/src\/org\/nightcode\/gwt\/selectio\/client\/Selector\.java" checks="[a-zA-Z0-9]*" />
+  <suppress files="selectio\/src\/com\/google\/gwt\/user\/cellview\/client\/CellList\.java" checks="[a-zA-Z0-9]*" />
 </suppressions>
